@@ -1,38 +1,61 @@
-.App {
+.fns{
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 15px;
+}
+.valores{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 15px;
+}
+
+.card{
+  border-radius: 10px;
+  cursor: pointer;
+  height: 80px;
+  padding: 10px;
+  width: 90%;
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  background-color: white;
+  justify-content: space-around;
+  -webkit-box-shadow: 0 -0.5px 10px 0 #898989;
+  -moz-box-shadow: 0 -0.5px 10px 0 #898989;
+}
+
+
+.tablas{
+  display: grid;
+  margin-top: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas: "punto nr biss";
+  grid-auto-rows: 400px;
+}
+
+.punto{
+  grid-area: punto;
+}
+
+.nr{
+  grid-area: nr;
+}
+
+.biss{
+  grid-area: biss;
+}
+
+.modal-body{
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 80%;
+    margin-right: auto;
+    margin-left: auto;
   }
 }
