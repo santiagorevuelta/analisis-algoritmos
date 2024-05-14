@@ -25,25 +25,41 @@
   -moz-box-shadow: 0 -0.5px 10px 0 #898989;
 }
 
+.isActive{
+  background-color: var(--bs-btn-hover-bg) !important;
+  color: white !important;
+  -webkit-box-shadow: 0 -0.5px 10px 0 var(--bs-btn-hover-bg);
+  -moz-box-shadow: 0 -0.5px 10px 0 var(--bs-btn-hover-bg);
+}
+
 
 .tablas{
   display: grid;
   margin-top: 20px;
   grid-template-columns: repeat(3, 1fr);
   grid-template-areas: "punto nr biss";
-  grid-auto-rows: 400px;
+  gap: 5px;
 }
 
 .punto{
   grid-area: punto;
+  border: 0.5px solid rgb(128, 128, 128);
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .nr{
   grid-area: nr;
+  border: 0.5px solid rgb(128, 128, 128);
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .biss{
   grid-area: biss;
+  border: 0.5px solid rgb(128, 128, 128);
+  padding: 10px;
+  border-radius: 10px;
 }
 
 .modal-body{
@@ -52,10 +68,15 @@
   align-items: center;
 }
 
-@media (min-width: 576px) {
-  .modal-dialog {
-    max-width: 80%;
-    margin-right: auto;
-    margin-left: auto;
-  }
+.modal-content{
+  min-width: max-content;
+}
+
+.modal-dialog {
+  max-width: 80% !important;
+}
+
+h2{
+  display: flex;
+  justify-content: space-between;
 }

@@ -1,57 +1,83 @@
 import React, {useEffect, useState} from 'react';
 import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
-import {Modal,Button} from "react-bootstrap";
+import {Button, Modal, Row} from "react-bootstrap";
 
-function BisectionComponent({bs: {fn, a, b, error}}) {
+function BisectionComponent({bs}) {
+    const {funcion:fn, a, b, error} = bs
     const [iteraciones, setIteraciones] = useState([]);
     const [puntos, setPuntos] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
 
-    // Define la función de bisección
     const bisection = (fun, a, b, error) => {
-        // Comprobar si hay una solución en el intervalo elegido
-        if (math.sign(math.evaluate(fun, {x: a})) === math.sign(math.evaluate(fun, {x: b}))) {
-            console.log('Ese intervalo no sirve, de malas, busque otro');
-            return;
-        }
+        try {
+            const f_eval = math.compile(fun);
 
-        // Encontrar la cantidad de iteraciones
-        const iter = math.ceil(math.log2(math.abs((a - b) / error)));
+            const sol = [];
+            let a_i = a;
+            let b_i = b;
+            for (let i = 0; i < 100; i++) { // Limitamos a 100 iteraciones para evitar bucles infinitos
+                const c = (a_i + b_i) / 2;
+                const f_a = f_eval.evaluate({ x: a_i });
+                const f_b = f_eval.evaluate({ x: b_i });
+                const f_c = f_eval.evaluate({ x: c });
 
-        // Método de bisección
-        const iteraciones = [];
-        const puntos = [];
-        for (let i = 0; i < iter; i++) {
-            const Resultado = (a + b) / 2;
-            const ev_resultado = math.evaluate(fun, {x: Resultado});
+                sol.push({ iteracion: i + 1, a: a_i, b: b_i, c, f_a, f_b, f_c });
 
-            iteraciones.push(i + 1);
-            puntos.push(Resultado);
-
-            if (math.sign(ev_resultado) === math.sign(math.evaluate(fun, {x: a}))) {
-                a = Resultado;
-            } else {
-                b = Resultado;
+                if (f_c === 0 || (b_i - a_i) / 2 < error) {
+                    break;
+                } else if (f_a * f_c < 0) {
+                    b_i = c;
+                } else {
+                    a_i = c;
+                }
             }
-        }
 
-        setIteraciones(iteraciones);
-        setPuntos(puntos);
+            setIteraciones(sol);
+        } catch (e) {
+            console.log('bisection', e.message)
+        }
     };
 
     useEffect(() => {
-        bisection(fn, a, b, error);
+        if(fn === ''){
+            setIteraciones([]);
+            setPuntos([])
+        }else{
+            bisection(fn, a, b, error);
+        }
     }, []);
 
     return (
         <div>
-            <h2>Bisección:</h2>
-            {iteraciones.length > 0 && (
+            <h2>Bisección: {iteraciones.length > 0 && (
                 <Button variant="primary" onClick={() => {
                     setVerGrafica(true)
                 }}>Ver grafica</Button>
-            )}
+            )}</h2>
+            <Row>
+                {Object.keys(bs).map(key => (
+                    <span><strong>{key}</strong>{`: ${bs[key]}`}</span>
+                ))}
+            </Row>
+            <table>
+                <thead>
+                <tr>
+                    <th>Iteración</th>
+                    <th>a</th>
+                    <th>b</th>
+                </tr>
+                </thead>
+                <tbody>
+                {iteraciones.map((iteracion, index) => (
+                    <tr key={index}>
+                        <td>{iteracion.iteracion}</td>
+                        <td>{typeof  iteracion.a === 'number'? iteracion.a.toFixed(6):iteracion.a}</td>
+                        <td>{typeof  iteracion.b === 'number'? iteracion.b.toFixed(6):iteracion.b}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
             <Modal show={verGrafica}
                    onHide={setVerGrafica}
                    backdrop="static">
@@ -63,20 +89,20 @@ function BisectionComponent({bs: {fn, a, b, error}}) {
                     <Plot
                         data={[
                             {
-                                x: iteraciones,
-                                y: puntos,
+                                x: iteraciones.map((_, index) => index + 1),
+                                y: iteraciones.map(iteracion => iteracion.c),
                                 type: 'scatter',
                                 mode: 'lines+markers',
-                                marker: {color: 'blue'},
-                                name: 'Puntos de bisección',
+                                marker: { color: 'blue' },
+                                name: 'Puntos',
                             },
                         ]}
                         layout={{
                             width: 800,
                             height: 400,
-                            title: 'Iteraciones vs Puntos de Bisección',
-                            xaxis: {title: 'Iteraciones'},
-                            yaxis: {title: 'Puntos'},
+                            title: 'Iteraciones vs Puntos (Bisección)',
+                            xaxis: { title: 'Iteraciones' },
+                            yaxis: { title: 'Puntos' },
                         }}
                     />
                 </Modal.Body></Modal>
