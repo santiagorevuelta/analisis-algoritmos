@@ -8,32 +8,37 @@ function BisectionComponent({bs}) {
     const [iteraciones, setIteraciones] = useState([]);
     const [puntos, setPuntos] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
+    const [tiempo, setTiempo] = useState({});
+    const [result, setResult] = useState(null);
 
     const bisection = (fun, a, b, error) => {
         try {
-            const f_eval = math.compile(fun);
+            let inicio = new Date();
+            if (Math.sign(math.evaluate(fun, { x: a })) === Math.sign(math.evaluate(fun, { x: b }))) {
+                return setResult('No sirve');
+            }
 
-            const sol = [];
-            let a_i = a;
-            let b_i = b;
-            for (let i = 0; i < 100; i++) { // Limitamos a 100 iteraciones para evitar bucles infinitos
-                const c = (a_i + b_i) / 2;
-                const f_a = f_eval.evaluate({ x: a_i });
-                const f_b = f_eval.evaluate({ x: b_i });
-                const f_c = f_eval.evaluate({ x: c });
+            let it = Math.log2(Math.abs(a - b) / error);
+            it = Math.ceil(it);
 
-                sol.push({ iteracion: i + 1, a: a_i, b: b_i, c, f_a, f_b, f_c });
+            let result;
+            let iterationData = [];
 
-                if (f_c === 0 || (b_i - a_i) / 2 < error) {
-                    break;
-                } else if (f_a * f_c < 0) {
-                    b_i = c;
+            for (let i = 0; i < it; i++) {
+                result = (a + b) / 2;
+                const ev_result = math.evaluate(fun, { x: result });
+                iterationData.push({ iteration: i + 1, value: result });
+                if (Math.sign(ev_result) === Math.sign(math.evaluate(fun, { x: a }))) {
+                    a = result;
                 } else {
-                    a_i = c;
+                    b = result;
                 }
             }
 
-            setIteraciones(sol);
+            setIteraciones(iterationData);
+            setResult(result);
+            let fin = new Date();
+            setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
         } catch (e) {
             console.log('bisection', e.message)
         }
@@ -56,11 +61,17 @@ function BisectionComponent({bs}) {
                 }}>Ver grafica</Button>
             )}</h2>
             <Row>
-                {Object.keys(bs).map(key => (
+                {Object.keys(Object.assign(bs,tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${bs[key]}`}</span>
                 ))}
             </Row>
-            <table>
+            {result && <p><strong>La solución es</strong>: {result}</p>}
+            <ul>
+                {iteraciones.map((d) => (
+                    <li key={d.iteration}>Iteración {d.iteration}: {d.value}</li>
+                ))}
+            </ul>
+            {/*<table>
                 <thead>
                 <tr>
                     <th>Iteración</th>
@@ -77,7 +88,7 @@ function BisectionComponent({bs}) {
                     </tr>
                 ))}
                 </tbody>
-            </table>
+            </table>*/}
             <Modal show={verGrafica}
                    onHide={setVerGrafica}
                    backdrop="static">
@@ -89,21 +100,14 @@ function BisectionComponent({bs}) {
                     <Plot
                         data={[
                             {
-                                x: iteraciones.map((_, index) => index + 1),
-                                y: iteraciones.map(iteracion => iteracion.c),
+                                x: iteraciones.map((d) => d.iteration),
+                                y: iteraciones.map((d) => d.value),
                                 type: 'scatter',
                                 mode: 'lines+markers',
-                                marker: { color: 'blue' },
-                                name: 'Puntos',
+                                marker: { color: 'red' },
                             },
                         ]}
-                        layout={{
-                            width: 800,
-                            height: 400,
-                            title: 'Iteraciones vs Puntos (Bisección)',
-                            xaxis: { title: 'Iteraciones' },
-                            yaxis: { title: 'Puntos' },
-                        }}
+                        layout={{ title: 'Iteraciones del Método de Bisección', xaxis: { title: 'Iteración' }, yaxis: { title: 'Valor' } }}
                     />
                 </Modal.Body></Modal>
         </div>

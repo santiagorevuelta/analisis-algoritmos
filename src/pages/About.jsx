@@ -106,7 +106,7 @@ function About() {
                 setSelectedFunction(jsonBase)
                 setShowModal(true)
             }}>Crear funcion</Button>
-            <div className={'fns'}>
+            <div className={'fnsEdit'}>
                 {funciones.slice(1, funciones.length).map((func, index) => (
                     <Card key={index} style={{width: '18rem', margin: '10px'}}>
                         <Card.Body>

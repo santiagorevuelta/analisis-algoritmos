@@ -7,9 +7,11 @@ function NewtonRaphsonComponent({nr}) {
     const {funcion:f, x0, tolerancia:tolerance, iteraciones:iter} = nr
     const [solucion, setSolucion] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
+    const [tiempo, setTiempo] = useState({});
 
     const newtonRaphson = (f, x0, tol, iter) => {
         try {
+            let inicio = new Date();
             const f_prime = math.derivative(f, 'x');
             const f_eval = math.compile(f);
 
@@ -33,6 +35,8 @@ function NewtonRaphsonComponent({nr}) {
 
                 sol.push(x_i_plus_1);
             }
+            let fin = new Date();
+            setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}, segundos`})
 
             setSolucion(sol);
         } catch (e) {
@@ -59,7 +63,7 @@ function NewtonRaphsonComponent({nr}) {
             )}</h2>
 
             <Row>
-                {Object.keys(nr).map(key => (
+                {Object.keys(Object.assign(nr,tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${nr[key]}`}</span>
                 ))}
             </Row>

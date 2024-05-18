@@ -7,9 +7,11 @@ function FixedPointComponent({punto}) {
     const {g, tolerancia, iteraciones:iter, x0} = punto
     const [solucion, setSolucion] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
+    const [tiempo, setTiempo] = useState({});
 
     const fixedPoint = (g, tolerancia, iter, x0) => {
         try {
+            let inicio = new Date();
             const sol = [x0];
             for (let i = 0; i < iter; i++) {
                 const x_i = sol[i];
@@ -17,12 +19,15 @@ function FixedPointComponent({punto}) {
                 const error = Math.abs((x_i_plus_1 - x_i) / x_i_plus_1);
 
                 if (error < tolerancia) {
+                    let fin = new Date();
+                    setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
                     return sol;
                 }
 
                 sol.push(x_i_plus_1);
             }
-
+            let fin = new Date();
+            setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
             return sol;
         }catch (e) {
             return []
@@ -46,7 +51,7 @@ function FixedPointComponent({punto}) {
                 }}>{`Ver grafica`}</Button>
             )}</h2>
             <Row>
-                {Object.keys(punto).map(key => (
+                {Object.keys(Object.assign(punto,tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${punto[key]}`}</span>
                 ))}
             </Row>
@@ -71,7 +76,7 @@ function FixedPointComponent({punto}) {
                                 y: solucion,
                                 type: 'scatter',
                                 mode: 'lines+markers',
-                                marker: {color: 'blue'},
+                                marker: {color: 'green'},
                                 name: 'Puntos',
                             },
                         ]}
