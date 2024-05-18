@@ -2,14 +2,15 @@ import React, {useEffect, useState} from 'react';
 import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
+import {toast, ToastContainer} from "react-toastify";
 
 function BisectionComponent({bs}) {
     const {funcion:fn, a, b, error} = bs
     const [iteraciones, setIteraciones] = useState([]);
-    const [puntos, setPuntos] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
     const [tiempo, setTiempo] = useState({});
     const [result, setResult] = useState(null);
+    const [catcherror, setError] = useState(null);
 
     const bisection = (fun, a, b, error) => {
         try {
@@ -27,7 +28,9 @@ function BisectionComponent({bs}) {
             for (let i = 0; i < it; i++) {
                 result = (a + b) / 2;
                 const ev_result = math.evaluate(fun, { x: result });
+
                 iterationData.push({ iteration: i + 1, value: result });
+
                 if (Math.sign(ev_result) === Math.sign(math.evaluate(fun, { x: a }))) {
                     a = result;
                 } else {
@@ -41,15 +44,15 @@ function BisectionComponent({bs}) {
             setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
         } catch (e) {
             console.log('bisection', e.message)
+            setError('Bisección: '+ e.message)
         }
     };
 
     useEffect(() => {
         if(fn === ''){
             setIteraciones([]);
-            setPuntos([])
         }else{
-            bisection(fn, a, b, error);
+            bisection(fn.replace('X','x'), parseInt(a), parseInt(b), error);
         }
     }, []);
 
@@ -65,6 +68,10 @@ function BisectionComponent({bs}) {
                     <span><strong>{key}</strong>{`: ${bs[key]}`}</span>
                 ))}
             </Row>
+            {catcherror !== null &&(
+                <span className={'error'}>{catcherror}</span>
+            )}
+
             {result && <p><strong>La solución es</strong>: {result}</p>}
             <ul>
                 {iteraciones.map((d) => (
@@ -107,7 +114,7 @@ function BisectionComponent({bs}) {
                                 marker: { color: 'red' },
                             },
                         ]}
-                        layout={{ title: 'Iteraciones del Método de Bisección', xaxis: { title: 'Iteración' }, yaxis: { title: 'Valor' } }}
+                        layout={{ title: 'Iteraciones del Método de (Bisección)', xaxis: { title: 'Iteración' }, yaxis: { title: 'Valor' } }}
                     />
                 </Modal.Body></Modal>
         </div>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import firebase from "firebase/compat/app";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {useAuth} from "../context/AuthProvider";
 import {Button, Card, Col, Form, Modal, Row} from "react-bootstrap";
 import {Divider} from "@mui/material";
@@ -94,7 +94,7 @@ function About() {
 
     const handleChange = (e, type) => {
         const {name, value} = e.target;
-        selectedFunction[type][name] = value
+        selectedFunction[type][name] = value.replace('X','x')
         setSelectedFunction({...selectedFunction});
     };
 

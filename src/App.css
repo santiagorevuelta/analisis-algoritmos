@@ -1,3 +1,9 @@
+.vs{
+  position: absolute;
+  z-index: 1;
+  bottom: 10px;
+  right: 10px;
+}
 .fns{
   margin-top: 20px;
   display: grid;
@@ -86,4 +92,9 @@ h2{
   display: flex;
   grid-gap: 5px;
   flex-wrap: wrap;
+}
+
+.error{
+  color: red;
+  font-weight:bold;
 }

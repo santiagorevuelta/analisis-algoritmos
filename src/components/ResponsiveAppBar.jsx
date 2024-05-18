@@ -17,7 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {AddBox} from '@mui/icons-material';
 
 
-const pages = [{name:'Funciones',link:'/funciones'}];
+const pages = [{name:'Taylor',link:'/taylor'},{name:'Editar funciones',link:'/funciones'}];
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -96,7 +96,7 @@ function ResponsiveAppBar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" href={page.link}>{page.name}</Typography>
+                                    <Typography sx={{ textTransform: 'capitalize' }} textAlign="center" href={page.link}>{page.name}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -116,6 +116,7 @@ function ResponsiveAppBar() {
                             letterSpacing: '.3rem',
                             color: 'inherit',
                             textDecoration: 'none',
+                            textTransform: 'capitalize',
                         }}
                     >
                         LOGO

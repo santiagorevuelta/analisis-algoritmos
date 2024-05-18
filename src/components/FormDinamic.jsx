@@ -14,6 +14,7 @@ const FormDinamic = ({obj, type, label,handleChange}) => {
                             placeholder={`${key}`}
                             name={key}
                             key={`form${key}`}
+                            autoComplete={false}
                             value={obj[key]}
                             onChange={(e) => {
                                 handleChange(e, type)

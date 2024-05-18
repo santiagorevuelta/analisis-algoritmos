@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
+import {toast, ToastContainer} from "react-toastify";
 
 function NewtonRaphsonComponent({nr}) {
     const {funcion:f, x0, tolerancia:tolerance, iteraciones:iter} = nr
     const [solucion, setSolucion] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
     const [tiempo, setTiempo] = useState({});
+    const [error, setError] = useState(null);
 
     const newtonRaphson = (f, x0, tol, iter) => {
         try {
@@ -36,12 +38,12 @@ function NewtonRaphsonComponent({nr}) {
                 sol.push(x_i_plus_1);
             }
             let fin = new Date();
-            setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}, segundos`})
-
+            setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
+            setError(null)
             setSolucion(sol);
         } catch (e) {
             setSolucion([])
-            console.log('newtonRaphson', e.message)
+            setError('Newton-Raphson: '+ e.message)
         }
 
     };
@@ -50,7 +52,7 @@ function NewtonRaphsonComponent({nr}) {
         if(f === ''){
             setSolucion([]);
         }else{
-            newtonRaphson(f, x0, tolerance, iter);
+            newtonRaphson(f.replace('X','x'), x0, tolerance, iter);
         }
     }, []);
 
@@ -61,12 +63,14 @@ function NewtonRaphsonComponent({nr}) {
                     setVerGrafica(true)
                 }}>Ver grafica</Button>
             )}</h2>
-
             <Row>
                 {Object.keys(Object.assign(nr,tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${nr[key]}`}</span>
                 ))}
             </Row>
+            {error !== null &&(
+                <span className={'error'}>{error}</span>
+            )}
             <ul>
                 {solucion.map((punto, index) => (
                     <li key={index}>Iteración {index + 1}: {punto}</li>

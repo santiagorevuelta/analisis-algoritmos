@@ -2,12 +2,14 @@ import React, {useEffect, useState} from 'react';
 import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
+import {toast, ToastContainer} from "react-toastify";
 
 function FixedPointComponent({punto}) {
     const {g, tolerancia, iteraciones:iter, x0} = punto
     const [solucion, setSolucion] = useState([]);
     const [verGrafica, setVerGrafica] = useState(false);
     const [tiempo, setTiempo] = useState({});
+    const [error, setError] = useState(null);
 
     const fixedPoint = (g, tolerancia, iter, x0) => {
         try {
@@ -28,8 +30,10 @@ function FixedPointComponent({punto}) {
             }
             let fin = new Date();
             setTiempo({tiempo:`Tiempo de ejecución:, ${(fin - inicio) / 1000}`})
+            setError(null)
             return sol;
         }catch (e) {
+            setError('Punto fijo: '+ e.message)
             return []
         }
     };
@@ -38,7 +42,7 @@ function FixedPointComponent({punto}) {
         if(g === ''){
             setSolucion([]);
         }else{
-            const solve = fixedPoint(g, tolerancia, iter, x0);
+            const solve = fixedPoint(g.replace('X','x'), tolerancia, iter, x0);
             setSolucion(solve);
         }
     }, []);
@@ -55,6 +59,9 @@ function FixedPointComponent({punto}) {
                     <span><strong>{key}</strong>{`: ${punto[key]}`}</span>
                 ))}
             </Row>
+            {error !== null &&(
+                <span className={'error'}>{error}</span>
+            )}
             <ul>
                 {solucion.map((punto, index) => (
                     <li key={index}>Iteración {index + 1}: {punto}</li>

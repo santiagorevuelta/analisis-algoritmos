@@ -6,6 +6,7 @@ import BisectionComponent from "../components/BisectionComponent";
 import {Button} from "react-bootstrap";
 import {useAuth} from "../context/AuthProvider";
 
+
 const config = {
     loader: {load: ["input/asciimath"]}
 }
@@ -25,7 +26,7 @@ function Home() {
                 <Button key={index}
                         className={`card ${datos?.fn === items.fn?'isActive':''}`}
                         onClick={() => {
-                             setDatos(null)
+                             //setDatos(null)
                              setTimeout(()=>{
                                  setDatos(items.fn === 'Limpiar' ? null : {...items})
                              },500)
@@ -33,17 +34,17 @@ function Home() {
                         {items.fn}
                     </Button>))}
         </div>
-        {datos !== null && (<div className={'tablas'}>
+        <div className={'tablas'}>
             <div className={'punto'}>
-                <FixedPointComponent {...{...datos}} />
+                {datos !== null && (<FixedPointComponent key={'1'} {...{...datos}} />)}
             </div>
             <div className={'nr'}>
-                <NewtonRaphsonComponent {...{...datos}} />
+                {datos !== null && (<NewtonRaphsonComponent key={'2'} {...{...datos}} />)}
             </div>
             <div className={'biss'}>
-                <BisectionComponent {...{...datos}} />
+                {datos !== null && (<BisectionComponent  key={'3'}  {...{...datos}} />)}
             </div>
-        </div>)}
+        </div>
     </div>);
 }
 
