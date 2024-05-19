@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
 import {toast, ToastContainer} from "react-toastify";
+import sortObjectByKeys from "../utils";
 
 function BisectionComponent({bs}) {
     const {funcion:fn, a, b, error} = bs
@@ -64,7 +65,7 @@ function BisectionComponent({bs}) {
                 }}>Ver grafica</Button>
             )}</h2>
             <Row>
-                {Object.keys(Object.assign(bs,tiempo)).map(key => (
+                {Object.keys(Object.assign(sortObjectByKeys(bs),tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${bs[key]}`}</span>
                 ))}
             </Row>

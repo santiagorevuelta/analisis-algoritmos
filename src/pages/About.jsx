@@ -100,7 +100,7 @@ function About() {
 
 
     return (
-        <div className={'mt-3'}>
+        <div className={'mt-3 container'}>
             <Button variant={'secondary'} onClick={() => {
                 setIsNew(true)
                 setSelectedFunction(jsonBase)

@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {AuthProvider} from "./context/AuthProvider";
 import Taylor from "./pages/Taylor";
 import {ToastContainer} from "react-toastify";
+import HotCode from "./pages/HotCode";
 
 
 function App() {
@@ -18,11 +19,12 @@ function App() {
             <AuthProvider>
                 <ResponsiveAppBar/>
                 <ToastContainer/>
-                <span className={'vs'}>v1.5</span>
+                <span className={'vs'}>v1.8</span>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/funciones" element={<About />} />
                     <Route path="/taylor" element={<Taylor />} />
+                    <Route path="/map" element={<HotCode />} />
                 </Routes>
             </AuthProvider>
         </Router>

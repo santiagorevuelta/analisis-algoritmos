@@ -6,18 +6,24 @@ import {
     Button,
     Container,
     IconButton,
-    MenuItem,
     Menu,
+    MenuItem,
     Toolbar,
     Tooltip,
     Typography
 } from '@mui/material';
-import AdbIcon from '@mui/icons-material/Adb';
 import MenuIcon from '@mui/icons-material/Menu';
 import {AddBox} from '@mui/icons-material';
 
 
-const pages = [{name:'Taylor',link:'/taylor'},{name:'Editar funciones',link:'/funciones'}];
+const pages = [
+    {name: 'Análisis', link: '/'},
+    {name: 'Taylor', link: '/taylor'},
+    {name: 'Ecuaciones elípticas', link: '/map'}];
+const settings = [{
+    name: 'Editar funciones',
+    link: '/funciones'
+}]
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -46,25 +52,6 @@ function ResponsiveAppBar() {
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AddBox sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="/"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'none', md: 'flex'},
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        Inicio
-                    </Typography>
-
                     <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
                         <IconButton
                             size="large"
@@ -96,7 +83,18 @@ function ResponsiveAppBar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                                    <Typography sx={{ textTransform: 'capitalize' }} textAlign="center" href={page.link}>{page.name}</Typography>
+                                    <Button
+                                        key={page.name}
+                                        onClick={() => {
+                                            handleLink(page)
+                                        }}
+                                        sx={{
+                                            my: 2, color: 'white', display: 'block',
+                                            textTransform: 'capitalize'
+                                        }}
+                                    >
+                                        {page.name}
+                                    </Button>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -125,10 +123,13 @@ function ResponsiveAppBar() {
                         {pages.map((page) => (
                             <Button
                                 key={page.name}
-                                onClick={()=>{
+                                onClick={() => {
                                     handleLink(page)
                                 }}
-                                sx={{my: 2, color: 'white', display: 'block'}}
+                                sx={{
+                                    my: 2, color: 'white', display: 'block',
+                                    textTransform: 'capitalize'
+                                }}
                             >
                                 {page.name}
                             </Button>
@@ -141,6 +142,31 @@ function ResponsiveAppBar() {
                                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
                             </IconButton>
                         </Tooltip>
+                        <Menu
+                            sx={{mt: '45px'}}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                        >
+                            {settings.map((setting) => (
+                                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                                    <Typography sx={{textTransform: 'capitalize'}}
+                                                onClick={() => {
+                                                    handleLink(setting)
+                                                }} textAlign="center">{setting.name}</Typography>
+                                </MenuItem>
+                            ))}
+                        </Menu>
                     </Box>
                 </Toolbar>
             </Container>

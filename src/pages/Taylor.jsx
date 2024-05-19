@@ -1,6 +1,6 @@
 "use client"
 import React, {useState} from 'react';
-import {Col, Form, InputGroup, Row, Table,Button} from "react-bootstrap";
+import {Button, Col, Form, InputGroup, Row, Table} from "react-bootstrap";
 import {toast} from 'react-toastify';
 import * as math from 'mathjs'
 import {MathJax, MathJaxContext} from "better-react-mathjax";
@@ -48,18 +48,18 @@ function Taylor() {
             const _paso = [{
                 x: 0,
                 valor_teorico: valor_x,
-                valor_experimental: (fn_eval-1),
+                valor_experimental: (fn_eval - 1),
                 polinomio: 1,
                 tolerancia: "",
                 errorPorcentual: 0,
                 isT: false,
-            },{
+            }, {
                 x: 1,
                 valor_teorico: 1 + valor_x,
                 valor_experimental: fn_eval - 2,
-                polinomio: 1+valor_x,
+                polinomio: 1 + valor_x,
                 tolerancia: "",
-                errorPorcentual: Math.abs(1+valor_x) / Math.abs(fn_eval) * 100,
+                errorPorcentual: Math.abs(1 + valor_x) / Math.abs(fn_eval) * 100,
                 isT: false,
             }]
             let i = 1
@@ -72,7 +72,7 @@ function Taylor() {
                 //if (i >= 2) sum = sum - valor_x
                 let res = Math.pow(valor_x, i)
                 let n_fac = math.factorial(n_factorial)
-                let sum = _paso[i].polinomio + (res/n_fac)
+                let sum = _paso[i].polinomio + (res / n_fac)
                 Acum = sum
                 EA = fn_eval - sum
 
@@ -98,8 +98,8 @@ function Taylor() {
                 }
             }
             let res = Math.pow(valor_x, i)
-            let n_fac= math.factorial(n_factorial)
-            Acum = _paso[i].polinomio + (res/n_fac)
+            let n_fac = math.factorial(n_factorial)
+            Acum = _paso[i].polinomio + (res / n_fac)
             EA = fn_eval - Acum;
 
             _paso.push({
@@ -111,9 +111,9 @@ function Taylor() {
                 errorPorcentual: Math.abs(EA) / Math.abs(fn_eval) * 100,
                 isT: false,
             })
-            calcularFormula(i>=50?50:i)
+            calcularFormula(i >= 50 ? 50 : i)
             // @ts-ignore
-            setPasos(_paso.splice(0,50));
+            setPasos(_paso.splice(0, 50));
             toast.success('Evaluado!');
         } catch (e) {
             // @ts-ignore
@@ -141,10 +141,9 @@ function Taylor() {
                         <InputGroup>
                             <Form.Control
                                 type="text"
-                                autoComplete={false}
                                 placeholder={'Ejemplo: e^x'}
                                 value={funcion}
-                                onChange={(e) => setFuncion(e.target.value.replace('X','x'))}
+                                onChange={(e) => setFuncion(e.target.value.replace('X', 'x'))}
                                 id="f"
                             />
                             <Button className={'btn btn-dark'} id="bti" onClick={() => {
@@ -158,26 +157,6 @@ function Taylor() {
                                 Evaluar
                             </Button>
                         </InputGroup>
-                        {/*<InputGroup>
-                        {verLista ? (<Form.Select aria-label="Default select example"
-                                     value={funcion}
-                                     onChange={(e) => setFuncion(e.target.value)}>
-                            {data.map(item=>(<option value={item.value}>{item.value}</option>))}
-                        </Form.Select>):(
-                            <Form.Control
-                                type="text"
-                                value={funcion}
-                                onChange={(e) => setFuncion(e.target.value)}
-                                id="f"
-                            />
-                        )}
-                        <Button className={'btn btn-dark'} id="bti" onClick={()=>{
-                            setFuncion('exp')
-                            setVerLista(!verLista)
-                        }}>
-                            {verLista?'Ocultar':'Ver lista'}
-                        </Button>
-                    </InputGroup>*/}
                     </Col>
                 </Row>
                 <Row className={'mt-1'}>

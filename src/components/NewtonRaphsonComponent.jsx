@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
 import {toast, ToastContainer} from "react-toastify";
+import sortObjectByKeys from "../utils";
 
 function NewtonRaphsonComponent({nr}) {
     const {funcion:f, x0, tolerancia:tolerance, iteraciones:iter} = nr
@@ -56,6 +57,7 @@ function NewtonRaphsonComponent({nr}) {
         }
     }, []);
 
+
     return (
         <div>
             <h2>Newton-Raphson: {solucion.length > 0 && (
@@ -64,7 +66,7 @@ function NewtonRaphsonComponent({nr}) {
                 }}>Ver grafica</Button>
             )}</h2>
             <Row>
-                {Object.keys(Object.assign(nr,tiempo)).map(key => (
+                {Object.keys(Object.assign(sortObjectByKeys(nr),tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${nr[key]}`}</span>
                 ))}
             </Row>

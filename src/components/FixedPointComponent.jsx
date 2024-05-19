@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
 import {toast, ToastContainer} from "react-toastify";
+import sortObjectByKeys from "../utils";
 
 function FixedPointComponent({punto}) {
     const {g, tolerancia, iteraciones:iter, x0} = punto
@@ -55,7 +56,7 @@ function FixedPointComponent({punto}) {
                 }}>{`Ver grafica`}</Button>
             )}</h2>
             <Row>
-                {Object.keys(Object.assign(punto,tiempo)).map(key => (
+                {Object.keys(Object.assign(sortObjectByKeys(punto),tiempo)).map(key => (
                     <span><strong>{key}</strong>{`: ${punto[key]}`}</span>
                 ))}
             </Row>
