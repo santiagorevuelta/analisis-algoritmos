@@ -29,11 +29,10 @@ export const AuthProvider = ({ children }) => {
     const [funciones, setFunciones] = useState([]);
 
     function reloadFns() {
-        const collectionRef = db.collection('funciones');
         let fns = [{
             "fn": "Limpiar"
         }]
-        collectionRef.get().then((querySnapshot) => {
+        db.collection('funciones').get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
                 fns.push({...doc.data(), key: doc.id})
             });

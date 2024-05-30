@@ -2,26 +2,14 @@ import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-function HotCode() {
-    const [size, setSize] = useState(10);
-    const [phi, setPhi] = useState(1);
-    const [borderValues, setBorderValues] = useState({
-        top: 0,
-        bottom: 200,
-        left: 0,
-        right: 0,
-    });
+function FiniteDifferenceMethod({ size, borderValues, phi }) {
     const [solution, setSolution] = useState(null);
-    const [equationCount, setEquationCount] = useState(0);
-    const [iterations, setIterations] = useState([]);
 
     const solvePDE = (size, borderValues, phi) => {
         const n = size;
         const h = 1 / (n + 1);
         let u = Array(n + 2).fill().map(() => Array(n + 2).fill(0));
         let u_new = Array(n + 2).fill().map(() => Array(n + 2).fill(0));
-        let iterData = [];
 
         // Set boundary conditions
         for (let i = 0; i < n + 2; i++) {
@@ -44,22 +32,46 @@ function HotCode() {
                     error = Math.max(error, Math.abs(u_new[i][j] - u[i][j]));
                 }
             }
-            // Save iteration data
-            iterData.push(JSON.parse(JSON.stringify(u_new)));
-
             // Swap references
             [u, u_new] = [u_new, u];
             iter++;
         }
 
         setSolution(u);
-        setEquationCount((n - 2) * (n - 2)); // Update the equation count
-        setIterations(iterData);
     };
 
     const handleClick = () => {
         solvePDE(size, borderValues, phi);
     };
+
+    return (
+        <div className="mt-3">
+            <button className="btn btn-primary" onClick={handleClick}>Resolver PDE</button>
+            {solution && (
+                <Plot
+                    data={[
+                        {
+                            z: solution,
+                            type: 'heatmap',
+                            colorscale: 'Viridis',
+                        },
+                    ]}
+                    layout={{ title: 'Solución de la PDE', xaxis: { title: 'x' }, yaxis: { title: 'y' } }}
+                />
+            )}
+        </div>
+    );
+}
+
+function App() {
+    const [size, setSize] = useState(10);
+    const [phi, setPhi] = useState(0);
+    const [borderValues, setBorderValues] = useState({
+        top: 0,
+        bottom: 200,
+        left: 0,
+        right: 0,
+    });
 
     return (
         <div className="container">
@@ -119,54 +131,10 @@ function HotCode() {
                         onChange={(e) => setBorderValues({ ...borderValues, right: parseFloat(e.target.value) })}
                     />
                 </div>
-                <div className="form-group">
-                    <button className="btn btn-primary" onClick={handleClick}>Resolver</button>
-                </div>
             </div>
-            {equationCount > 0 && (
-                <div className="mt-3">
-                    <span>Número de ecuaciones a resolver: {equationCount.toLocaleString()}</span>
-                </div>
-            )}
-            {solution && (
-                <>
-                    <Plot
-                        data={[
-                            {
-                                z: solution,
-                                type: 'heatmap',
-                                colorscale: [
-                                    [0, 'rgba(97, 201, 164, 0.9)'],
-                                    [0.5, 'rgba(255, 208, 0, 0.9)'],
-                                    [1, 'rgba(254, 73, 44, 0.9)']
-                                ],
-                            },
-                        ]}
-                        layout={{ title: 'Solución de la PDE', xaxis: { title: 'x' }, yaxis: { title: 'y' } }}
-                    />
-                    <h3 className="mt-4">Iteraciones</h3>
-                    <ul className="list-group mt-2">
-                        {iterations.map((iter, index) => (
-                            <li key={index} className="list-group-item">
-                                Iteración {index + 1}
-                                <Plot
-                                    data={[
-                                        {
-                                            z: iter,
-                                            type: 'heatmap',
-                                            colorscale: 'Viridis',
-                                        },
-                                    ]}
-                                    layout={{ width: 300, height: 300, title: `Iteración ${index + 1}` }}
-                                />
-                            </li>
-                        ))}
-                    </ul>
-                </>
-
-            )}
+            <FiniteDifferenceMethod size={size} borderValues={borderValues} phi={phi} />
         </div>
     );
 }
 
-export default HotCode;
+export default App;

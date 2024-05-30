@@ -19,11 +19,14 @@ import {AddBox} from '@mui/icons-material';
 const pages = [
     {name: 'Análisis', link: '/'},
     {name: 'Taylor', link: '/taylor'},
-    {name: 'Ecuaciones elípticas', link: '/map'}];
-const settings = [{
+    {name: 'Ecuaciones elípticas', link: '/map'}
+];
+const settings= [
+    {
     name: 'Editar funciones',
     link: '/funciones'
-}]
+    }
+]
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);
