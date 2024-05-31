@@ -19,7 +19,7 @@ import {AddBox} from '@mui/icons-material';
 const pages = [
     {name: 'Análisis', link: '/'},
     {name: 'Taylor', link: '/taylor'},
-    {name: 'Ecuaciones elípticas', link: '/map'}
+    {name: 'Análisis de la Ecuación', link: '/map'}
 ];
 const settings= [
     {
@@ -163,10 +163,10 @@ function ResponsiveAppBar() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{textTransform: 'capitalize'}}
+                                    <Button sx={{textTransform: 'capitalize'}}
                                                 onClick={() => {
                                                     handleLink(setting)
-                                                }} textAlign="center">{setting.name}</Typography>
+                                                }} textAlign="center">{setting.name}</Button>
                                 </MenuItem>
                             ))}
                         </Menu>
