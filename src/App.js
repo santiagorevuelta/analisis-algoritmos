@@ -11,7 +11,6 @@ import {AuthProvider} from "./context/AuthProvider";
 import Taylor from "./pages/Taylor";
 import {ToastContainer} from "react-toastify";
 import HotCode from "./pages/HotCode";
-import ChatIA from "./pages/ChatIA";
 
 
 function App() {
@@ -26,7 +25,6 @@ function App() {
                     <Route path="/funciones" element={<About />} />
                     <Route path="/taylor" element={<Taylor />} />
                     <Route path="/map" element={<HotCode />} />
-                    <Route path="/chat" element={<ChatIA />} />
                 </Routes>
             </AuthProvider>
         </Router>
