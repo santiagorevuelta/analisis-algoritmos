@@ -20,16 +20,15 @@ const pages = [
     {name: 'Home', link: '/'},
     {name: 'Compiladores', link: '/compiladores'},
     {name: 'Fisica', link: '/fisica'},
-/*    {name: 'Taylor', link: '/taylor'},
-    {name: 'Análisis de la Ecuación', link: '/map'},
-    {name: 'projectil', link: '/projectile'}*/
+    {name: 'Taylor', link: '/taylor'},
+    {name: 'Análisis de la Ecuación', link: '/map'}
 ];
-const settings= [/*
+const settings= [
     {
     name: 'Editar funciones',
     link: '/funciones'
     }
-*/]
+]
 
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState(null);

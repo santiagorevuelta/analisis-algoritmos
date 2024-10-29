@@ -1,137 +1,121 @@
-import React, { useState } from 'react';
-import Plot from 'react-plotly.js';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import Plot from "react-plotly.js";
+import {Container} from "react-bootstrap";
 
-// Lista de armas con propiedades
-const weapons = [
-    { name: 'Pistola', velocity: 300, imageUrl: 'https://example.com/pistola.png' },
-    { name: 'Rifle', velocity: 800, imageUrl: 'https://example.com/rifle.png' },
-    { name: 'Escopeta', velocity: 400, imageUrl: 'https://example.com/escopeta.png' },
+const projectiles = [
+    { id: 1, name: "Bala", mass: 0.01, velocity: 800, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/M107_1.jpg/800px-M107_1.jpg" },
+    { id: 2, name: "Flecha", mass: 0.05, velocity: 50, image: "https://images.vexels.com/content/259420/preview/archery-weapon-arrow-silhouette-70cf3d.png" },
+    { id: 3, name: "Lanzacohetes", mass: 10, velocity: 300, image: "/Lanzacohetes.webp" },
 ];
 
-const ProjectileMotion = () => {
-    const [selectedWeapon, setSelectedWeapon] = useState(weapons[0]);
-    const [angle, setAngle] = useState(45);
-    const [distance, setDistance] = useState(100);
-    const [initialHeight, setInitialHeight] = useState(0); // Nueva altura inicial
-    const [trajectoryData, setTrajectoryData] = useState([]);
+const ProjectileSimulator = () => {
+    const [selectedProjectile, setSelectedProjectile] = useState(projectiles[0]);
+    const [angle, setAngle] = useState(45);  // Ángulo de lanzamiento en grados
+    const g = 9.81;  // Aceleración de la gravedad en m/s²
 
-    // Calcular la trayectoria del proyectil
-    const calculateTrajectory = () => {
-        try {
-            const g = 9.81;
-            const angleRad = (angle * Math.PI) / 180;
-            const v0x = selectedWeapon.velocity * Math.cos(angleRad);
-            const v0y = selectedWeapon.velocity * Math.sin(angleRad);
-
-            let data = [];
-            let t = 0;
-            const deltaTime = 0.1;
-            const linearDistance = 10;
-
-            // Trayectoria en línea recta
-            while (t * v0x < linearDistance) {
-                const x = v0x * t;
-                const y = initialHeight + v0y * t;
-                data.push({ x, y });
-                t += deltaTime;
-            }
-
-            // Trayectoria parabólica con altura inicial
-            while (true) {
-                const x = v0x * t;
-                const y = initialHeight + v0y * t - 0.5 * g * t * t;
-                if (y < 0) break; // Detener cuando el proyectil toque el suelo
-                data.push({ x, y });
-                t += deltaTime;
-            }
-
-            setTrajectoryData(data);
-        } catch (e) {
-            console.error("Error en el cálculo de la trayectoria", e);
-        }
+    const handleProjectileSelect = (projectile) => {
+        setSelectedProjectile(projectile);
     };
 
-    const xData = trajectoryData.map((point) => point.x);
-    const yData = trajectoryData.map((point) => point.y);
+    const calculateTrajectory = () => {
+        const { velocity, mass } = selectedProjectile;
+        const angleRad = (angle * Math.PI) / 180;  // Conversión a radianes
+        const timeOfFlight = (2 * velocity * Math.sin(angleRad)) / g;
+
+        let t = 0;
+        const timeStep = 0.1;
+        const straightPathX = [];
+        const straightPathY = [];
+        const fallingPathX = [];
+        const fallingPathY = [];
+
+        while (t <= timeOfFlight) {
+            const x = velocity * Math.cos(angleRad) * t;
+            const yStraight = velocity * Math.sin(angleRad) * t;
+            const yFall = yStraight - (0.5 * g * t ** 2);
+
+            straightPathX.push(x);
+            straightPathY.push(yStraight);
+            fallingPathX.push(x);
+            fallingPathY.push(yFall);
+            t += timeStep;
+        }
+
+        return { straightPathX, straightPathY, fallingPathX, fallingPathY };
+    };
+
+    const calculateKineticEnergy = () => {
+        const { mass, velocity } = selectedProjectile;
+        return 0.5 * mass * velocity ** 2;  // Fórmula de energía cinética
+    };
+
+    const { straightPathX, straightPathY, fallingPathX, fallingPathY } = calculateTrajectory();
+    const kineticEnergy = calculateKineticEnergy();
 
     return (
-        <Container style={{ paddingTop: '20px' }}>
-            <h2>Simulación de Trayectoria</h2>
-            <div style={{ display: 'flex', gap: '10px' }}>
-                {weapons.map((weapon) => (
+        <Container>
+            <h2>Simulador de Proyectiles</h2>
+
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                {projectiles.map((projectile) => (
                     <div
-                        key={weapon.name}
-                        onClick={() => setSelectedWeapon(weapon)}
+                        key={projectile.id}
                         style={{
-                            border: selectedWeapon.name === weapon.name ? '2px solid blue' : '1px solid gray',
-                            borderRadius: '5px',
-                            padding: '10px',
-                            cursor: 'pointer',
-                            textAlign: 'center',
+                            border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                            backgroundColor: selectedProjectile.id === projectile.id ? "#f0f0f0" : "white",
                         }}
+                        onClick={() => handleProjectileSelect(projectile)}
                     >
-                        <img src={weapon.imageUrl} alt={weapon.name} style={{ width: '100px', height: '100px' }} />
-                        <p>{weapon.name}</p>
-                        <p>Velocidad: {weapon.velocity} m/s</p>
+                        <img src={projectile.image} alt={projectile.name} style={{ width: "100px", height: "100px" }} />
+                        <h4>{projectile.name}</h4>
+                        <p>Masa: {projectile.mass} kg</p>
+                        <p>Velocidad: {projectile.velocity} m/s</p>
                     </div>
                 ))}
             </div>
-            <Row>
-                <Col sm={3}>
-                    <Form.Group controlId="formAngle">
-                        <Form.Label>Ángulo (grados):</Form.Label>
-                        <Form.Control
-                            type="number"
-                            value={angle}
-                            onChange={(e) => setAngle(Number(e.target.value))}
-                        />
-                    </Form.Group>
-                </Col>
-                <Col sm={3}>
-                    <Form.Group controlId="formDistance">
-                        <Form.Label>Distancia del objetivo (m):</Form.Label>
-                        <Form.Control
-                            type="number"
-                            value={distance}
-                            onChange={(e) => setDistance(Number(e.target.value))}
-                        />
-                    </Form.Group>
-                </Col>
-                <Col sm={3}>
-                    <Form.Group controlId="formInitialHeight">
-                        <Form.Label>Altura inicial (m):</Form.Label>
-                        <Form.Control
-                            type="number"
-                            value={initialHeight}
-                            onChange={(e) => setInitialHeight(Number(e.target.value))}
-                        />
-                    </Form.Group>
-                </Col>
-            </Row>
-            <Button variant="primary" onClick={calculateTrajectory} style={{ marginTop: '10px' }}>
-                Calcular Trayectoria
-            </Button>
+
+            <div>
+                <label>Ángulo (°): </label>
+                <input type="number" value={angle} onChange={(e) => setAngle(Number(e.target.value))} />
+            </div>
+
+            <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                Energía Cinética: {kineticEnergy.toFixed(2)} J (julios)
+            </div>
+
             <Plot
                 data={[
                     {
-                        x: xData,
-                        y: yData,
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'red' },
-                        line: { dash: 'dot' },
+                        x: straightPathX,
+                        y: straightPathY,
+                        type: "scatter",
+                        mode: "lines",
+                        name: "Línea recta",
+                        line: { dash: "dash", color: "blue" },
+                    },
+                    {
+                        x: fallingPathX,
+                        y: fallingPathY,
+                        type: "scatter",
+                        mode: "lines",
+                        name: "Línea de caída",
+                        line: { color: "red" },
                     },
                 ]}
                 layout={{
-                    title: 'Trayectoria del proyectil',
-                    xaxis: { title: 'Distancia (m)' },
-                    yaxis: { title: 'Altura (m)' },
+                    title: `Trayectoria del Proyectil (${selectedProjectile.name})`,
+                    xaxis: { title: "Distancia (m)" },
+                    yaxis: { title: "Altura (m)", rangemode: "tozero" },
+                    width: 700,
+                    height: 500,
                 }}
-                style={{ width: '100%', height: '400px' }}
             />
         </Container>
     );
 };
 
-export default ProjectileMotion;
+export default ProjectileSimulator;

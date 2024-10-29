@@ -112,3 +112,7 @@ h2{
   }
 }
 
+.MuiButton-text{
+  color: #000 !important;
+}
+

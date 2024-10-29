@@ -23,7 +23,7 @@ function App() {
                 <ToastContainer/>
                 <span className={'vs'}>v1.8</span>
                 <Routes>
-                    <Route path="/" element={<></>} />{/*<Home />*/}
+                    <Route path="/" element={<Home />} />{/**/}
                     <Route path="/funciones" element={<About />} />
                     <Route path="/taylor" element={<Taylor />} />
                     <Route path="/map" element={<HotCode />} />
