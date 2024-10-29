@@ -11,6 +11,8 @@ import {AuthProvider} from "./context/AuthProvider";
 import Taylor from "./pages/Taylor";
 import {ToastContainer} from "react-toastify";
 import HotCode from "./pages/HotCode";
+import ProjectileMotion from "./components/ProjectileMotion";
+import Compiladores from "./components/Compiladores";
 
 
 function App() {
@@ -21,10 +23,13 @@ function App() {
                 <ToastContainer/>
                 <span className={'vs'}>v1.8</span>
                 <Routes>
-                    <Route path="/" element={<Home />} />
+                    <Route path="/" element={<></>} />{/*<Home />*/}
                     <Route path="/funciones" element={<About />} />
                     <Route path="/taylor" element={<Taylor />} />
                     <Route path="/map" element={<HotCode />} />
+                    <Route path="/projectile" element={<ProjectileMotion />} />
+                    <Route path="/compiladores" element={<Compiladores />} />
+                    <Route path="/fisica" element={<ProjectileMotion />} />
                 </Routes>
             </AuthProvider>
         </Router>
