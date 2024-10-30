@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import Plot from 'react-plotly.js';
 import * as math from 'mathjs'
 import {Button, Modal, Row} from "react-bootstrap";
-import {toast, ToastContainer} from "react-toastify";
 import sortObjectByKeys from "../utils";
 
 function FixedPointComponent({punto}) {
