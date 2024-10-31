@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Graphviz } from 'graphviz-react';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import {Form, Button, Row, Col, Table} from 'react-bootstrap';
 import { toast, ToastContainer } from "react-toastify";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -105,12 +105,7 @@ const Compiladores = () => {
         const currentTransitions = isDeterministic ? deterministicTransitions : transitions;
 
         states.forEach((state) => {
-            // Si el estado es de aceptación, le damos un círculo doble
             if (acceptStates.has(state)) {
-                dot += `${state} [shape=doublecircle]; `;
-            }
-            // Si es el último estado y el autómata es no determinístico, le damos un doble círculo rojo
-            else if (isNonDeterministic && state === lastState) {
                 dot += `${state} [shape=doublecircle, peripheries=2, color=red]; `;
             } else {
                 dot += `${state} [shape=circle]; `;
@@ -139,6 +134,55 @@ const Compiladores = () => {
         setAcceptStateInput('');
         setDeterministicTransitions([]);
     };
+
+
+    const renderTransitionTable = (isDeterministic = false) => {
+        const currentTransitions = isDeterministic ? deterministicTransitions : transitions;
+        const tableStates = !isDeterministic ? [...new Set([...states, ...acceptStates])] : [...states];
+        const tableSymbols = [...new Set(currentTransitions.map((transition) => transition.symbol))];
+
+        const isAcceptState = (state) => {
+           if (isDeterministic) {
+                const componentStates = state.split(',');
+                return componentStates.some((subState) => acceptStates.has(subState));
+            }
+            return acceptStates.has(state);
+        };
+
+        return (
+            <Table striped bordered hover>
+                <thead>
+                <tr>
+                    <th>Estados</th>
+                    {tableSymbols.map((symbol, index) => (
+                        <th key={index}>{symbol}</th>
+                    ))}
+                    <th>Acepta (1) / Rechaza (0)</th>
+                </tr>
+                </thead>
+                <tbody>
+                {tableStates.map((state, index) => (
+                    <tr key={index}>
+                        <td>{state}</td>
+                        {tableSymbols.map((symbol, symbolIndex) => {
+                            const transition = currentTransitions.find(
+                                (t) => t.fromState === state && t.symbol === symbol
+                            );
+                            return (
+                                <td key={symbolIndex}>
+                                    {transition ? transition.toStates.join(', ') : '-'}
+                                </td>
+                            );
+                        })}
+                        <td>{isAcceptState(state) ? '1' : '0'}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </Table>
+        );
+    };
+
+
 
     return (
         <div className="container mt-4" id={'compiladores'}>
@@ -218,13 +262,24 @@ const Compiladores = () => {
                 </div>
             )}
 
+            <h5>Estados de Aceptación</h5>
+            <ul>
+                {[...acceptStates].map((state, index) => (
+                    <li key={index}>{state}</li>
+                ))}
+            </ul>
+
             <h3>Gráfica AFN</h3>
             <Graphviz dot={generateGraphvizDot()} />
+            <h3>Tabla de Transiciones AFN</h3>
+            {renderTransitionTable(false)}
 
             {isNonDeterministic && (
                 <>
                     <h3>Gráfica AFD</h3>
                     <Graphviz dot={generateGraphvizDot(true)} />
+                    <h3>Tabla de Transiciones AFD</h3>
+                    {renderTransitionTable(true)}
                 </>
             )}
         </div>
