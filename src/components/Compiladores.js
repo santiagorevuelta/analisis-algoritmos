@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const Compiladores = () => {
     const [transitions, setTransitions] = useState([]);
     const [states, setStates] = useState(new Set());
+    const [statesCopy, setStatesCopy] = useState(new Set());
     const [acceptStates, setAcceptStates] = useState(new Set());
     const [fromState, setFromState] = useState('');
     const [symbol, setSymbol] = useState('');
@@ -96,7 +97,7 @@ const Compiladores = () => {
         }
 
         setDeterministicTransitions(newTransitions);
-        setStates(newStates);
+        setStatesCopy(newStates);
     };
 
     const generateGraphvizDot = (isDeterministic = false) => {
@@ -104,7 +105,7 @@ const Compiladores = () => {
 
         const currentTransitions = isDeterministic ? deterministicTransitions : transitions;
 
-        states.forEach((state) => {
+        (!isDeterministic?states:statesCopy).forEach((state) => {
             if (acceptStates.has(state)) {
                 dot += `${state} [shape=doublecircle, peripheries=2, color=red]; `;
             } else {
@@ -125,6 +126,7 @@ const Compiladores = () => {
     const reset = () => {
         setTransitions([]);
         setStates(new Set());
+        setStatesCopy(new Set());
         setAcceptStates(new Set());
         setFromState('');
         setSymbol('');
@@ -138,7 +140,7 @@ const Compiladores = () => {
 
     const renderTransitionTable = (isDeterministic = false) => {
         const currentTransitions = isDeterministic ? deterministicTransitions : transitions;
-        const tableStates = !isDeterministic ? [...new Set([...states, ...acceptStates])] : [...states];
+        const tableStates = !isDeterministic ? [...new Set([...(!isDeterministic?states:statesCopy), ...acceptStates])] : [...(!isDeterministic?states:statesCopy)];
         const tableSymbols = [...new Set(currentTransitions.map((transition) => transition.symbol))];
 
         const isAcceptState = (state) => {
@@ -187,7 +189,7 @@ const Compiladores = () => {
     return (
         <div className="container mt-4" id={'compiladores'}>
             <ToastContainer />
-            <h2 className="mb-3">Validador de AFN
+            <h2 className="mb-3">Validador de AFND / AFID
                 <Button variant="danger" className="ms-3" onClick={reset}>
                     Reiniciar
                 </Button>
@@ -250,7 +252,7 @@ const Compiladores = () => {
                     </Col>
                     <Col xs="auto">
                         <Button variant="secondary" onClick={validateAFN}>
-                            Validar AFN
+                            Validar
                         </Button>
                     </Col>
                 </Row>
@@ -269,16 +271,16 @@ const Compiladores = () => {
                 ))}
             </ul>
 
-            <h3>Gráfica AFN</h3>
+            <h3>Gráfica</h3>
             <Graphviz dot={generateGraphvizDot()} />
-            <h3>Tabla de Transiciones AFN</h3>
+            <h3>Tabla de Transiciones</h3>
             {renderTransitionTable(false)}
 
             {isNonDeterministic && (
                 <>
-                    <h3>Gráfica AFD</h3>
+                    <h3>Gráfica AFN</h3>
                     <Graphviz dot={generateGraphvizDot(true)} />
-                    <h3>Tabla de Transiciones AFD</h3>
+                    <h3>Tabla de Transiciones AFN</h3>
                     {renderTransitionTable(true)}
                 </>
             )}

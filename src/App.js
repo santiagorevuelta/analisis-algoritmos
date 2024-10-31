@@ -21,7 +21,7 @@ function App() {
             <AuthProvider>
                 <ResponsiveAppBar/>
                 <ToastContainer/>
-                <span className={'vs'}>v1.8</span>
+                <span className={'vs'}>v1.9</span>
                 <Routes>
                     <Route path="/" element={<Home />} />{/**/}
                     <Route path="/funciones" element={<About />} />
